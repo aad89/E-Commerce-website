@@ -15,10 +15,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // CORS setup (adjust for your actual front-end URL)
-app.use(cors({
-    origin: 'http://localhost:5173',
-    credentials: true
-}));
+app.use(cors());
 
 // Routes
 const authRoutes = require("./src/users/user.route");
