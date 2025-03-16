@@ -15,7 +15,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // CORS setup (adjust for your actual front-end URL)
-app.use(cors());
+const corsOptions = {
+    origin: 'https://e-commerce-website-frontend-882k.onrender.com',  // specify the exact frontend URL
+    methods: 'GET, POST, PUT, DELETE',  // Allow necessary methods
+    allowedHeaders: 'Content-Type, Authorization',  // Allow necessary headers
+    credentials: true,  // Allow credentials (cookies, authorization headers, etc.)
+  };
+  
+  app.use(cors(corsOptions));
 
 // Routes
 const authRoutes = require("./src/users/user.route");
