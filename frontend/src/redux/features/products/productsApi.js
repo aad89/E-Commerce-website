@@ -9,33 +9,40 @@ const productsApi = createApi({
     }),
     tagTypes: ["Products"],
     endpoints: (builder) => ({
-        fetchAllProducts: builder.query({
-            query: ({ category, color, minPrice, maxPrice, page = 1, limit = 10 }) => {
-  const params = new URLSearchParams();
+       fetchAllProducts: builder.query({
+  query: ({ category, color, minPrice, maxPrice, page = 1, limit = 8 }) => {
+    const params = new URLSearchParams();
 
-  if (category && category !== 'all') {
-    params.append('category', category);
-  }
+    // Add category filter if it's not 'all' or empty
+    if (category && category !== 'all') {
+      params.append('category', category);
+    }
 
-  if (color && color !== 'all') {
-    params.append('color', color);
-  }
+    // Add color filter if it's not 'all' or empty
+    if (color && color !== 'all') {
+      params.append('color', color);
+    }
 
-  if (minPrice !== undefined && minPrice !== '' && minPrice > 0) {
-    params.append('minPrice', minPrice.toString());
-  }
+    // Add minPrice filter if it's defined and greater than 0
+    if (minPrice !== undefined && minPrice !== '' && minPrice > 0) {
+      params.append('minPrice', minPrice.toString());
+    }
 
-  if (maxPrice !== undefined && maxPrice !== '' && maxPrice > 0) {
-    params.append('maxPrice', maxPrice.toString());
-  }
+    // Add maxPrice filter if it's defined and greater than 0
+    if (maxPrice !== undefined && maxPrice !== '' && maxPrice > 0) {
+      params.append('maxPrice', maxPrice.toString());
+    }
 
-  params.append('page', page.toString());
-  params.append('limit', limit.toString());
+    // Add pagination
+    params.append('page', page.toString());
+    params.append('limit', limit.toString());
 
-  return `/?${params.toString()}`;
-},
-            providesTags : ["Products"]
-        }),
+    // Return the query string with parameters
+    return `/?${params.toString()}`;
+  },
+  providesTags: ["Products"],
+}),
+
         fetchProductById: builder.query({
             query: (id) => `${id}`,
             providesTags: (result,error, id) => [{type: "Products", id}]
