@@ -36,7 +36,7 @@ const productsApi = createApi({
     // Add pagination
     params.append('page', page.toString());
     params.append('limit', limit.toString());
-
+    console.log(params);
     // Return the query string with parameters
     return `/?${params.toString()}`;
   },
