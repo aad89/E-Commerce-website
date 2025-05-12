@@ -69,7 +69,7 @@ router.get('/', async (req, res) => {
     const totalProducts = await Products.countDocuments(filter);
     const totalPages = Math.ceil(totalProducts / parseInt(limit));
       
-    const countproducts = await Products.find();
+    const countproducts = await Products.find({});
       console.log(countproducts)
     // Fetch products with the filter, pagination, and sorting
     const products = await Products.find(filter)
