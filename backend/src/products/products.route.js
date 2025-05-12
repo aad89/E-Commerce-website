@@ -31,58 +31,65 @@ router.post("/create-product", async(req,res)=>{
 })
 
 router.get('/', async (req, res) => {
-    try {
-      const { category, color, minPrice, maxPrice, page = 1, limit = 10 } = req.query;
-  
-      let filter = {};
-  
-      // Handle category filter: if it's not 'all' or empty, apply the filter
-      if (category && category !== "all" && category !== "") {
-        filter.category = category;
-      }
-  
-      // Handle color filter: if it's not 'all' or empty, apply the filter
-      if (color && color !== "all" && color !== "") {
-        filter.color = color;
-      }
-  
-      // Handle price range filter: only apply if both minPrice and maxPrice are valid
-     if (minPrice !== undefined && maxPrice !== undefined && minPrice !== '' && maxPrice !== '') {
-  const min = parseFloat(minPrice);
-  const max = parseFloat(maxPrice);
+  try {
+    const { category, color, minPrice, maxPrice, page = 1, limit = 10 } = req.query;
 
-  if (!isNaN(min) && !isNaN(max) && min <= max) {
-    filter.price = { $gte: min, $lte: max };
-  } else {
-    console.error(`Invalid price range: min=${minPrice}, max=${maxPrice}`);
-  }
-}
-  
-      // Pagination calculations
-      const skip = (parseInt(page) - 1) * parseInt(limit);
-      const totalProducts = await Products.countDocuments(filter);
-      const totalPages = Math.ceil(totalProducts / parseInt(limit));
-  
-      // Fetch products with the filter, pagination, and sorting
-      const products = await Products.find(filter)
-        .skip(skip)
-        .limit(parseInt(limit))
-        .populate("author", "email")
-        .sort({ createdAt: -1 });
-  
-      // Send the response with products and pagination details
-      res.status(200).send({ products, totalPages, totalProducts });
-    } catch (error) {
-      // Log the error stack for debugging purposes
-      console.error("Error Fetching Products:", error.stack);
-  
-      // Return a response with a more informative error message
-      res.status(500).send({
-        message: "Failed Fetching Products",
-        error: error.message,
-      });
+    let filter = {};
+
+    // Handle category filter: if it's not 'all' or empty, apply the filter
+    if (category && category !== "all" && category !== "") {
+      filter.category = category;
     }
-  });
+
+    // Handle color filter: if it's not 'all' or empty, apply the filter
+    if (color && color !== "all" && color !== "") {
+      filter.color = color;
+    }
+
+    // Handle price range filter: only apply if both minPrice and maxPrice are valid
+    if (minPrice !== undefined && maxPrice !== undefined && minPrice !== '' && maxPrice !== '') {
+      const min = parseFloat(minPrice);
+      const max = parseFloat(maxPrice);
+
+      if (!isNaN(min) && !isNaN(max) && min <= max) {
+        filter.price = { $gte: min, $lte: max };
+      } else {
+        console.error(`Invalid price range: min=${minPrice}, max=${maxPrice}`);
+      }
+    }
+
+    // Log the final filter for debugging
+    console.log("Final filter:", filter);
+
+    // Pagination calculations
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    console.log(`Skip: ${skip}, Limit: ${limit}`);
+
+    // Get the total count of products for pagination
+    const totalProducts = await Products.countDocuments(filter);
+    const totalPages = Math.ceil(totalProducts / parseInt(limit));
+
+    // Fetch products with the filter, pagination, and sorting
+    const products = await Products.find(filter)
+      .skip(skip)
+      .limit(parseInt(limit))
+      .populate("author", "email")
+      .sort({ createdAt: -1 });
+
+    // Send the response with products and pagination details
+    res.status(200).send({ products, totalPages, totalProducts });
+  } catch (error) {
+    // Log the error stack for debugging purposes
+    console.error("Error Fetching Products:", error.stack);
+
+    // Return a response with a more informative error message
+    res.status(500).send({
+      message: "Failed Fetching Products",
+      error: error.message,
+    });
+  }
+});
+
   
 
 router.get("/:id", async(req,res)=>{
