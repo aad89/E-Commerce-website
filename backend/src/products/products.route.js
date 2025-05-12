@@ -47,17 +47,16 @@ router.get('/', async (req, res) => {
       }
   
       // Handle price range filter: only apply if both minPrice and maxPrice are valid
-      if (minPrice && maxPrice && minPrice !== "0" && maxPrice !== "0") {
-        const min = parseFloat(minPrice);
-        const max = parseFloat(maxPrice);
-  
-        // Ensure minPrice and maxPrice are valid numbers
-        if (!isNaN(min) && !isNaN(max)) {
-          filter.price = { $gte: min, $lte: max };
-        } else {
-          console.error(`Invalid price range: min=${minPrice}, max=${maxPrice}`);
-        }
-      }
+     if (minPrice !== undefined && maxPrice !== undefined && minPrice !== '' && maxPrice !== '') {
+  const min = parseFloat(minPrice);
+  const max = parseFloat(maxPrice);
+
+  if (!isNaN(min) && !isNaN(max)) {
+    filter.price = { $gte: min, $lte: max };
+  } else {
+    console.error(`Invalid price range: min=${minPrice}, max=${maxPrice}`);
+  }
+}
   
       // Pagination calculations
       const skip = (parseInt(page) - 1) * parseInt(limit);
