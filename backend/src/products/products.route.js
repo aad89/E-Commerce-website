@@ -51,7 +51,7 @@ router.get('/', async (req, res) => {
   const min = parseFloat(minPrice);
   const max = parseFloat(maxPrice);
 
-  if (!isNaN(min) && !isNaN(max)) {
+  if (!isNaN(min) && !isNaN(max) && min <= max) {
     filter.price = { $gte: min, $lte: max };
   } else {
     console.error(`Invalid price range: min=${minPrice}, max=${maxPrice}`);
