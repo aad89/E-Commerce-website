@@ -10,17 +10,30 @@ const productsApi = createApi({
     tagTypes: ["Products"],
     endpoints: (builder) => ({
         fetchAllProducts: builder.query({
-            query: ({category, color, minPrice, maxPrice, page=1, limit = 10})=>{
-                const queryParams = new URLSearchParams({
-                        category: category || '',
-                        color: color || '',
-                        minPrice: minPrice || 0,
-                        maxPrice: maxPrice || 0,
-                        page: page.toString(),
-                        limit: limit.toString()
-                }).toString();
-                return `/?${queryParams}`
-            },
+            query: ({ category, color, minPrice, maxPrice, page = 1, limit = 10 }) => {
+  const params = new URLSearchParams();
+
+  if (category && category !== 'all') {
+    params.append('category', category);
+  }
+
+  if (color && color !== 'all') {
+    params.append('color', color);
+  }
+
+  if (minPrice !== undefined && minPrice !== '' && minPrice > 0) {
+    params.append('minPrice', minPrice.toString());
+  }
+
+  if (maxPrice !== undefined && maxPrice !== '' && maxPrice > 0) {
+    params.append('maxPrice', maxPrice.toString());
+  }
+
+  params.append('page', page.toString());
+  params.append('limit', limit.toString());
+
+  return `/?${params.toString()}`;
+},
             providesTags : ["Products"]
         }),
         fetchProductById: builder.query({
